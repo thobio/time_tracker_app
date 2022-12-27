@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:time_tracker_app/App/sign_in/sign_in_bloc.dart';
 import 'package:time_tracker_app/services/auth.dart';
 
-class SignInPage extends StatelessWidget {
-  const SignInPage({super.key, required this.authbase});
-  final AuthBase authbase;
+import '../common_widgets/show_exception_alert_dialog.dart';
 
-  Future<void> _signInAnonymously() async {
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
+  static Widget create(BuildContext context) {
+    return Provider(
+      create: (_) => SignInBloc(),
+      child: const SignInPage(),
+    );
+  }
+
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  Future<void> _signInAnonymously(BuildContext context) async {
     try {
-      await authbase.signInAnonymosly();
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      await auth.signInAnonymosly();
     } catch (e) {
       print(e.toString());
     }
@@ -15,13 +31,19 @@ class SignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of<SignInBloc>(context, listen: false);
     return Scaffold(
-      body: _buildContent(),
+      body: StreamBuilder<bool>(
+          stream: bloc.isLoadingStream,
+          initialData: false,
+          builder: (context, snapshot) {
+            return _buildContent(context, snapshot.data!);
+          }),
       backgroundColor: Colors.white.withOpacity(0.97),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context, bool isLoading) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -29,13 +51,9 @@ class SignInPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Spacer(),
-            const Text(
-              "Sign In",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w600,
-              ),
+            SizedBox(
+              height: 50.0,
+              child: _buildHeader(isLoading),
             ),
             const SizedBox(
               height: 20.0,
@@ -52,7 +70,7 @@ class SignInPage extends StatelessWidget {
                   Size.fromWidth(60.0),
                 ),
               ),
-              onPressed: _signinWithGoogle,
+              onPressed: isLoading ? null : () => _signinWithGoogle(context),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -77,11 +95,32 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  Future<void> _signinWithGoogle() async {
+  Widget _buildHeader(bool isLoading) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return const Text(
+      "Sign In",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Future<void> _signinWithGoogle(BuildContext context) async {
+    final bloc = Provider.of<SignInBloc>(context, listen: false);
     try {
-      await authbase.signInwithGoogle();
-    } catch (e) {
-      print(e.toString());
+      bloc.setIsLoading(true);
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      await auth.signInwithGoogle();
+    } on Exception catch (e) {
+      showExceptionAlertDialog(context, title: "Error", exception: e);
+    } finally {
+      bloc.setIsLoading(false);
     }
   }
 }
