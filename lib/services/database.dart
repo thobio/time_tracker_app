@@ -1,35 +1,35 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:time_tracker_app/App/home/model/user.dart';
 import 'package:time_tracker_app/services/api_path.dart';
+import 'package:time_tracker_app/services/firebase_service.dart';
+
+import '../App/home/model/role.dart';
 
 abstract class Database {
   Future<void> createUser(Users user);
-  Future<String> readUserStream();
+  Stream<List<Users>> readUserStream();
+  Stream<List<Role>> getAllRole();
 }
 
 class FirestoreDatabase implements Database {
   FirestoreDatabase({required this.uid});
   final String uid;
+  final _service = FirebaseService.instance;
 
   @override
-  Future<void> createUser(Users user) => _setData(
+  Future<void> createUser(Users user) => _service.setData(
         path: APIPath.user(uid),
         data: user.toMap(),
       );
 
   @override
-  Future<String> readUserStream() async {
-    final path = APIPath.allUser();
-    final snapshots = FirebaseFirestore.instance.collection(path).get();
-    // ignore: await_only_futures
-    return await snapshots.then((value) => value.toString()).toString();
-  }
+  Stream<List<Users>> readUserStream() => _service.collectionStream(
+        path: APIPath.allUser(),
+        builder: (data) => Users.fromMap(data),
+      );
 
-  Future<void> _setData({
-    required String path,
-    Map<String, dynamic>? data,
-  }) async {
-    final documentReference = FirebaseFirestore.instance.doc(path);
-    await documentReference.set(data!);
-  }
+  @override
+  Stream<List<Role>> getAllRole() => _service.collectionSelectAllStream(
+        path: APIPath.allRole(),
+        builder: (data) => Role.fromMap(data),
+      );
 }
