@@ -19,7 +19,7 @@ class FirebaseService {
   }) {
     final reference = FirebaseFirestore.instance
         .collection(path)
-        .where('uid', isNotEqualTo: FirebaseAuth.instance.currentUser!.uid);
+        .where('email', isNotEqualTo: FirebaseAuth.instance.currentUser!.email);
     final snapshots = reference.snapshots();
     return snapshots.map(
         (snapshot) => snapshot.docs.map((e) => builder(e.data())).toList());

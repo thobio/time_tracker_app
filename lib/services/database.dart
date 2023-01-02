@@ -17,7 +17,7 @@ class FirestoreDatabase implements Database {
 
   @override
   Future<void> createUser(Users user) => _service.setData(
-        path: APIPath.user(uid),
+        path: APIPath.user(user.email),
         data: user.toMap(),
       );
 

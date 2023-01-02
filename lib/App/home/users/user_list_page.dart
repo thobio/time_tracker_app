@@ -73,7 +73,7 @@ class UserListPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => AddUserPage.show(context),
+        onPressed: () => AddUserPage.show(context, users: null),
         child: const Icon(Icons.add),
       ),
     );
@@ -85,91 +85,98 @@ class UserListPage extends StatelessWidget {
       child: ListView.builder(
           itemCount: snapshot.data!.length,
           itemBuilder: (context, index) {
-            return SizedBox(
-              height: 100,
-              child: Center(
-                child: Row(children: [
-                  Image.asset(
-                    "images/google-logo.png",
-                    height: 50,
-                    width: 50,
-                  ),
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Spacer(),
-                        Text(
-                          snapshot.data![index].name,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  "Age:",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  snapshot.data![index].age,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Row(
-                                  children: [
-                                    const Text(
-                                      "Height:",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      snapshot.data![index].height,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Row(
-                                  children: [
-                                    const Text(
-                                      "Weight:",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      snapshot.data![index].weight,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+            return InkWell(
+              onTap: (() {
+                print("Tapped on the User name");
+              }),
+              child: SizedBox(
+                height: 100,
+                child: Center(
+                  child: Row(children: [
+                    Image.asset(
+                      "images/google-logo.png",
+                      height: 50,
+                      width: 50,
+                    ),
+                    Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Spacer(),
+                          Text(
+                            snapshot.data![index].name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        const Spacer(),
-                      ]),
-                ]),
+                          ),
+                          Row(
+                            children: [
+                              Row(
+                                children: [
+                                  const Text(
+                                    "Age:",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    snapshot.data![index].age,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Height:",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        snapshot.data![index].height,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        "Weight:",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        snapshot.data![index].weight,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                        ]),
+                    const Spacer(),
+                    const Icon(Icons.chevron_right_sharp),
+                  ]),
+                ),
               ),
             );
           }),
